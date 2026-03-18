@@ -1,7 +1,7 @@
 import logoDark from '~/components/icons/logo-dark.svg';
 import logoLight from '~/components/icons/logo-light.svg';
 
-export function Welcome() {
+export function Welcome(): React.ReactNode {
 	return (
 		<div className="flex items-center justify-center py-16">
 			<div className="flex-1 flex flex-col items-center gap-16 min-h-0">

@@ -1,7 +1,7 @@
 import type { TButtonLink } from '~/components/atoms/button/button.tsx';
 
 // Using the page data to build the correct URL path
-export const buildPageUrl = (link: TButtonLink) => {
+export const buildPageUrl = (link: TButtonLink): string => {
 	let url = '/';
 	if (link.page) {
 		url += link.page.slug;

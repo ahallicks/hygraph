@@ -51,6 +51,7 @@ export const Strip: React.FC<IStrip> = ({
 				</p>
 				{externalUrl ? (
 					<ButtonLink
+						id="strip-link-external"
 						linkText={linkText}
 						linkUrl={externalUrl}
 						variation="secondary"
@@ -61,12 +62,14 @@ export const Strip: React.FC<IStrip> = ({
 				) : null}
 				{page ? (
 					<ButtonLink
+						id="strip-link"
 						linkText={linkText}
 						linkUrl={buildPageUrl({
 							linkText: linkText,
 							linkUrl: page.slug,
 							page: page,
 							variation: 'secondary',
+							id: `${page.slug}-link`,
 						})}
 					>
 						<span aria-hidden="true">&rarr;</span>

@@ -6,11 +6,16 @@ export const Statistics: React.FC<IStatistics> = ({
 	statTitle,
 	statContent,
 	statistics,
+	contentId,
 }) => {
 	return (
 		<>
 			{statTitle || statContent ? (
-				<Title title={statTitle} content={statContent} />
+				<Title
+					title={statTitle}
+					content={statContent}
+					contentId={contentId}
+				/>
 			) : null}
 			<div className="bg-white py-24 sm:py-32">
 				<div className="mx-auto max-w-7xl px-6 lg:px-8">

@@ -1,16 +1,17 @@
-import type { RichTextProps } from '@graphcms/rich-text-react-renderer';
+import type { RichTextContent } from '@graphcms/rich-text-types';
 import type { TButtonLink } from '~/components/atoms/button/button.tsx';
 
 export interface IHero {
 	__typename: 'Hero';
+	id: string;
 	keyline?: {
 		html: string;
-		raw: any;
+		raw: RichTextContent;
 	};
 	title: string;
 	content?: {
 		html: string;
-		raw: RichTextProps['content'];
+		raw: RichTextContent;
 	};
 	links: TButtonLink[];
 };

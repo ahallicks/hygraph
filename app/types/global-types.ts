@@ -9,3 +9,9 @@ export type TNavLink = {
 	linkUrl: string;
 	variation?: 'primary' | 'secondary' | 'tertiary';
 };
+
+export type TAuthor = {
+	id: string;
+	name: string;
+	picture: string;
+};

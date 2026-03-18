@@ -1,15 +1,20 @@
+import { ButtonLinkFragment } from '~/components/atoms/button/button-fragment.ts';
+
 export const BannerFragment = `
 ... on Banner {
+	id
 	title
 	content {
-		html
 		raw
 	}
+	bannerImage: image {
+		url
+		width
+		height
+	}
+	flipped
 	links {
-		... on ButtonLink {
-			linkUrl
-			linkText
-		}
+		${ButtonLinkFragment}
 	}
 	bannerStats: statistics {
 		... on Statistics {

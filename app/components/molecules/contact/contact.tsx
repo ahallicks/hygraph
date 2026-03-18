@@ -1,6 +1,6 @@
 import { ChevronDownIcon } from '@heroicons/react/16/solid';
 
-export const Contact = () => {
+export const Contact = (): React.ReactNode => {
 	return (
 		<div className="isolate bg-white px-6 py-24 sm:py-32 lg:px-8">
 			<div
@@ -170,7 +170,7 @@ export const Contact = () => {
 						>
 							By selecting this, you agree to our{' '}
 							<a
-								href="#"
+								href="/"
 								className="font-semibold whitespace-nowrap text-indigo-600"
 							>
 								privacy policy

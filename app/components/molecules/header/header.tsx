@@ -1,31 +1,58 @@
-import type { IGlobalData } from '~/services/get-global-data.ts';
+'use client';
 
-import { useState } from 'react';
-import { Link } from 'react-router';
-import { Dialog, DialogPanel } from '@headlessui/react';
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import type { IGlobalData, INavLink } from '~/services/get-global-data.ts';
+
+import { useEffect, useState } from 'react';
+import { Link, useNavigation } from 'react-router';
+import {
+	Dialog,
+	DialogBackdrop,
+	DialogPanel,
+	DialogTitle,
+	Popover,
+	PopoverButton,
+	PopoverGroup,
+	PopoverPanel,
+	TransitionChild,
+} from '@headlessui/react';
+
 import { buildPageUrl } from '~/utils/build-url.ts';
 
+import { Icon } from '~/components/atoms/icon/icon.tsx';
+
 export const HeaderComponent: React.FC<IGlobalData> = ({
-	siteName,
+	title,
 	logo,
 	logoAltText,
 	navigationLinks,
 }) => {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
+	const navigation = useNavigation();
+
+	useEffect(() => {
+		if (navigation.state === 'loading' && !isLoading) {
+			setIsLoading(true);
+		}
+		if (navigation.state === 'idle' && isLoading) {
+			setIsLoading(false);
+			setMobileMenuOpen(false);
+		}
+	}, [navigation.state, isLoading]);
+
 	return (
-		<header className="sticky top-0 z-51 inset-x-0 backdrop-blur-lg">
+		<header className="sticky inset-x-0 top-0 z-40 backdrop-blur-md">
 			<nav
 				aria-label="Global"
-				className="flex items-center justify-between p-6 lg:px-8"
+				className="flex items-center justify-between px-6 py-4 lg:py-6 lg:px-8"
 			>
 				<div className="flex lg:flex-1">
 					<Link to="/" rel="home" className="-m-1.5 p-1.5">
-						<span className="sr-only">{siteName}</span>
+						<span className="sr-only">{title}</span>
 						<img
 							alt={logoAltText}
 							src={logo.url}
-							className="h-8 w-auto"
+							className="w-auto h-8"
 						/>
 					</Link>
 				</div>
@@ -33,82 +60,223 @@ export const HeaderComponent: React.FC<IGlobalData> = ({
 					<button
 						type="button"
 						onClick={() => setMobileMenuOpen(true)}
-						className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+						className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700 dark:text-gray-300"
 					>
 						<span className="sr-only">Open main menu</span>
-						<Bars3Icon aria-hidden="true" className="size-6" />
+						<Icon
+							icon="bars3Icon"
+							aria-hidden="true"
+							className="size-6"
+						/>
 					</button>
 				</div>
-				<div className="hidden lg:flex lg:gap-x-12">
-					{navigationLinks.map((item) => (
-						<Link
-							key={item.linkText}
-							to={buildPageUrl(item)}
-							className="text-sm/6 font-semibold text-gray-900 dark:text-gray-100"
-						>
-							{item.linkText}
-						</Link>
-					))}
-				</div>
+				<PopoverGroup className="hidden lg:block">
+					<ul className="lg:flex lg:gap-x-12">
+						{navigationLinks.map((item) => (
+							<li key={item.linkText}>
+								<Popover className="relative">
+									<PopoverButton className="inline-flex items-center font-semibold text-gray-700 dark:text-gray-300 gap-x-1 text-sm/6">
+										<span>{item.linkText}</span>
+										<Icon
+											icon="chevronDownIcon"
+											aria-hidden="true"
+											className="size-5"
+										/>
+									</PopoverButton>
+									<PopoverPanel
+										transition
+										className="absolute z-10 flex w-screen px-4 mt-5 transition -translate-x-1/2 bg-transparent left-1/2 max-w-max data-closed:translate-y-1 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
+									>
+										{({ close }) => (
+											<div className="flex-auto w-screen max-w-md overflow-hidden bg-white shadow-lg rounded-3xl text-sm/6 outline-1 outline-gray-900/5 dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+												{item.page.childPages
+													?.length ? (
+													<ul className="p-4">
+														{item.page.childPages.map(
+															(childPage) => (
+																<SubNavItem
+																	item={item}
+																	childPage={
+																		childPage
+																	}
+																	key={
+																		childPage.id
+																	}
+																/>
+															),
+														)}
+													</ul>
+												) : null}
+												<div className="grid grid-cols-1 divide-x divide-gray-900/5 bg-gray-50 dark:divide-white/10 dark:bg-gray-700/50">
+													<Link
+														to={buildPageUrl(item)}
+														className="flex items-center justify-center gap-x-2.5 p-3 font-semibold text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700/50"
+														onClick={() => close()}
+													>
+														<Icon
+															icon={
+																item.page
+																	.pageIcon
+															}
+															aria-hidden="true"
+															className="flex-none text-gray-500 size-5"
+														/>
+														View all {item.linkText}
+													</Link>
+												</div>
+											</div>
+										)}
+									</PopoverPanel>
+								</Popover>
+							</li>
+						))}
+					</ul>
+				</PopoverGroup>
 				<div className="hidden lg:flex lg:flex-1 lg:justify-end">
-					<a
-						href="#"
-						className="text-sm/6 font-semibold text-gray-900 dark:text-gray-100"
-					>
-						Log in <span aria-hidden="true">&rarr;</span>
-					</a>
+					Front End UK
 				</div>
 			</nav>
-			<Dialog
+			<MobileNav
+				title={title}
+				logo={logo}
+				logoAltText={logoAltText}
+				navigationLinks={navigationLinks}
 				open={mobileMenuOpen}
-				onClose={setMobileMenuOpen}
-				className="lg:hidden"
-			>
-				<div className="fixed inset-0 z-50" />
-				<DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white p-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
-					<div className="flex items-center justify-between">
-						<Link to="/" rel="home" className="-m-1.5 p-1.5">
-							<span className="sr-only">{siteName}</span>
-							<img
-								alt={logoAltText}
-								src={logo.url}
-								className="h-8 w-auto"
-							/>
-						</Link>
-						<button
-							type="button"
-							onClick={() => setMobileMenuOpen(false)}
-							className="-m-2.5 rounded-md p-2.5 text-gray-700"
-						>
-							<span className="sr-only">Close menu</span>
-							<XMarkIcon aria-hidden="true" className="size-6" />
-						</button>
-					</div>
-					<div className="mt-6 flow-root">
-						<div className="-my-6 divide-y divide-gray-500/10">
-							<div className="space-y-2 py-6">
-								{navigationLinks.map((item) => (
-									<Link
-										key={item.linkText}
-										to={buildPageUrl(item)}
-										className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-									>
-										{item.linkText}
-									</Link>
-								))}
-							</div>
-							<div className="py-6">
-								<a
-									href="#"
-									className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-								>
-									Log in
-								</a>
-							</div>
-						</div>
-					</div>
-				</DialogPanel>
-			</Dialog>
+				setOpen={setMobileMenuOpen}
+			/>
 		</header>
 	);
 };
+
+export const MobileNav: React.FC<
+	Pick<
+		IGlobalData & {
+			open: boolean;
+			setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+		},
+		| 'title'
+		| 'logo'
+		| 'logoAltText'
+		| 'navigationLinks'
+		| 'open'
+		| 'setOpen'
+	>
+> = ({ title, logo, logoAltText, navigationLinks, open, setOpen }) => (
+	<Dialog open={open} onClose={setOpen} className="relative z-50">
+		<DialogBackdrop
+			transition
+			className="fixed inset-0 transition-opacity duration-500 ease-in-out bg-gray-500/75 data-closed:opacity-0"
+		/>
+
+		<div className="fixed inset-0 overflow-hidden">
+			<div className="absolute inset-0 overflow-hidden">
+				<div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none sm:pl-16">
+					<DialogPanel
+						transition
+						className="relative w-screen max-w-md transition duration-500 ease-in-out transform pointer-events-auto data-closed:translate-x-full sm:duration-700"
+					>
+						<TransitionChild>
+							<div className="absolute top-0 left-0 flex pt-4 pr-2 -ml-8 duration-500 ease-in-out data-closed:opacity-0 sm:-ml-10 sm:pr-4">
+								<button
+									type="button"
+									onClick={() => setOpen(false)}
+									className="relative text-gray-300 rounded-md hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+								>
+									<span className="absolute -inset-2.5" />
+									<span className="sr-only">Close panel</span>
+									<Icon
+										icon="xMarkIcon"
+										aria-hidden="true"
+										className="size-6"
+									/>
+								</button>
+							</div>
+						</TransitionChild>
+						<div className="relative flex flex-col h-full py-6 overflow-y-auto bg-white shadow-xl dark:bg-gray-900">
+							<div className="px-4 sm:px-6">
+								<DialogTitle className="flex items-center gap-4 text-base font-semibold text-gray-900 dark:text-gray-300">
+									<img
+										alt={logoAltText}
+										src={logo.url}
+										className="w-auto h-8"
+									/>
+									{title}
+								</DialogTitle>
+							</div>
+							<div className="relative flex-1 px-4 mt-6 sm:px-6">
+								<ul className="py-6 space-y-2">
+									{navigationLinks.map((item) => (
+										<li key={item.linkText}>
+											<Link
+												to={buildPageUrl(item)}
+												className="flex items-center justify-between px-3 py-2 font-semibold text-gray-900 bg-gray-100 rounded-lg text-base/7 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-800"
+											>
+												{item.linkText}{' '}
+												<Icon
+													icon="arrowRightCircleIcon"
+													aria-hidden="true"
+													className="inline size-5"
+												/>
+											</Link>
+											{item.page.childPages?.length ? (
+												<ul className="mt-2 space-y-1">
+													{item.page.childPages.map(
+														(childPage) => (
+															<SubNavItem
+																item={item}
+																childPage={
+																	childPage
+																}
+																key={
+																	childPage.id
+																}
+															/>
+														),
+													)}
+												</ul>
+											) : null}
+										</li>
+									))}
+								</ul>
+							</div>
+						</div>
+					</DialogPanel>
+				</div>
+			</div>
+		</div>
+	</Dialog>
+);
+
+const SubNavItem: React.FC<{
+	item: INavLink;
+	childPage: {
+		id: string;
+		pageName: string;
+		slug: string;
+		introduction: string;
+		pageIcon: string;
+	};
+}> = ({ item, childPage }) => (
+	<li className="relative flex p-4 rounded-lg group gap-x-6 hover:bg-gray-50 dark:hover:bg-white/5">
+		<div className="flex items-center justify-center flex-none mt-1 rounded-lg size-11 bg-gray-50 group-hover:bg-white dark:bg-gray-700/50 dark:group-hover:bg-gray-700">
+			<Icon
+				icon={childPage.pageIcon}
+				aria-hidden="true"
+				className="text-gray-600 size-6 group-hover:text-indigo-600 dark:text-gray-400 dark:group-hover:text-white"
+			/>
+		</div>
+		<div>
+			<Link
+				to={`/${item.page.slug}/${childPage.slug}`}
+				className="text-sm font-semibold md:text-base dark:text-gray-300"
+				onClick={() => close()}
+			>
+				{childPage.pageName}
+				<span className="absolute inset-0" />
+			</Link>
+			<p className="mt-1 text-xs text-gray-600 md:text-base dark:text-gray-400">
+				{childPage.introduction}
+			</p>
+		</div>
+	</li>
+);
