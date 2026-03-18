@@ -1,25 +1,20 @@
-import type { MetaArgs, LoaderFunctionArgs } from 'react-router';
+import type { LoaderFunctionArgs } from 'react-router';
+import type { IPage } from '~/services/get-page.ts';
 
-import { useLoaderData } from 'react-router';
-import { Fragment } from 'react/jsx-runtime';
+import {
+	isRouteErrorResponse,
+	useLoaderData,
+	useRouteError,
+} from 'react-router';
 
 import { getPage } from '~/services/get-page.ts';
 
-import { Banner } from '~/components/molecules/banner/banner.tsx';
-import { Content } from '~/components/molecules/content/content.tsx';
-import { Features } from '~/components/molecules/feature/feature.tsx';
-import { Hero } from '~/components/molecules/hero/hero.tsx';
-import { LogoCloud } from '~/components/molecules/logo-cloud/logo-cloud.tsx';
-import { Statistics } from '~/components/molecules/statistics/statistics.tsx';
+import { NotFound } from '~/components/layouts/404/404.tsx';
+import { PageSections } from '~/components/layouts/page-sections/page-sections.tsx';
 
-export function meta({}: MetaArgs) {
-	return [
-		{ title: 'New React Router App' },
-		{ name: 'description', content: 'Welcome to React Router!' },
-	];
-}
-
-export const loader = async ({ params }: LoaderFunctionArgs) => {
+export const loader = async ({
+	params,
+}: LoaderFunctionArgs): Promise<{ page: IPage }> => {
 	const filePath = params['*'];
 
 	try {
@@ -31,26 +26,49 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 	}
 };
 
-export default function Page() {
+export default function Page(): React.ReactNode {
 	const { page } = useLoaderData<typeof loader>();
-	return page.sections.map((section, index) => (
-		<Fragment key={`${section.__typename}-${index}`}>
-			{/* Render hero section */}
-			{section.__typename === 'Hero' ? <Hero {...section} /> : null}
-			{/* Render feature section */}
-			{section.__typename === 'FeatureBlock' ? (
-				<Features {...section} />
-			) : null}
-			{/* Render statistics section */}
-			{section.__typename === 'Statistics' ? (
-				<Statistics {...section} />
-			) : null}
-			{/* Render banner section */}
-			{section.__typename === 'Banner' ? <Banner {...section} /> : null}
-			{section.__typename === 'LogoCloud' ? (
-				<LogoCloud {...section} />
-			) : null}
-			{section.__typename === 'Content' ? <Content {...section} /> : null}
-		</Fragment>
-	));
+	return (
+		<>
+			<title>{page.pageName}</title>
+			<meta name="description" content={page.seoDescription ?? ''} />
+			<PageSections page={page} />
+		</>
+	);
+}
+
+export function ErrorBoundary(): React.ReactNode {
+	const error = useRouteError();
+
+	let status = '500';
+	let message = 'Oops!';
+	let details = 'An unexpected error occurred.';
+	let stack: string | undefined;
+
+	if (isRouteErrorResponse(error)) {
+		status = error.status.toString();
+		message = error.status === 404 ? 'Page not found' : 'Error';
+		details =
+			error.status === 404
+				? 'The requested page could not be found.'
+				: error.statusText || details;
+	} else if (import.meta.env.DEV && error && error instanceof Error) {
+		details = error.message;
+		stack = error.stack;
+	}
+
+	return (
+		<>
+			<title>
+				{status}: {message}
+			</title>
+			<meta name="description" content={details} />
+			<NotFound
+				status={status}
+				details={details}
+				message={message}
+				stack={stack}
+			/>
+		</>
+	);
 }

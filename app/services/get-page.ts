@@ -1,37 +1,43 @@
+import type { IArticleCards } from '~/components/organisms/article-cards/article-cards-types.ts';
+import type { IAuthorCard } from '~/components/molecules/author-card/author-card-types.ts';
 import type { IBanner } from '~/components/molecules/banner/banner-types.ts';
+import type { ICardList } from '~/components/organisms/card-list/card-list-types.ts';
 import type { IContent } from '~/components/molecules/content/content-types.ts';
+import type { IDivider } from '~/components/atoms/divider/divider-types.ts';
 import type { IFeatureBlock } from '~/components/molecules/feature/feature-types.ts';
 import type { IHero } from '~/components/molecules/hero/hero-types.ts';
+import type { IHomepage } from './get-homepage.ts';
 import type { ILogoCloud } from '~/components/molecules/logo-cloud/logo-cloud-types.ts';
 import type { IStatistics } from '~/components/molecules/statistics/statistics-types.ts';
 
 import { GraphQLClient, gql } from 'graphql-request';
 
-import { createCacheKey, NotRedis } from '~/services/notredis.ts';
+import { NotRedis, createCacheKey } from '~/services/notredis.ts';
+import { fixThePage } from '~/utils/page-fixer.ts';
 import { tc } from '~/services/terminal-colours.ts';
+import { getAllPages } from './get-all-pages.ts';
 
+import { ArticleCardsFragment } from '~/components/organisms/article-cards/article-cards-fragment.ts';
+import { AuthorCardFragment } from '~/components/molecules/author-card/author-card-fragment.ts';
 import { BannerFragment } from '~/components/molecules/banner/banner-fragment.tsx';
+import { CardListFragment } from '~/components/organisms/card-list/card-list-fragment.ts';
 import { ContentFragment } from '~/components/molecules/content/content-fragment.ts';
+import { DividerFragment } from '~/components/atoms/divider/divider-fragment.ts';
 import { FeatureFragment } from '~/components/molecules/feature/feature-fragment.tsx';
 import { HeroFragment } from '~/components/molecules/hero/hero-fragment.tsx';
 import { LogoCloudFragment } from '~/components/molecules/logo-cloud/logo-cloud-fragment.ts';
 import { StatisticsFragment } from '~/components/molecules/statistics/statistics-fragment.ts';
 
-interface IPage {
+export interface IPage {
+	id: string;
 	pageName: string;
-	sections: IHero[] | IFeatureBlock[] | IStatistics[] | IBanner[] | ILogoCloud[] | IContent[];
+	seoDescription?: string;
+	slug: string;
+	introduction?: string;
+	sections: ICardList[] | IHero[] | IFeatureBlock[] | IStatistics[] | IBanner[] | ILogoCloud[] | IContent[] | IArticleCards[] | IAuthorCard[] | IDivider[];
 }
 
-type TPage = {
-	hero: IHero;
-	feature: IFeatureBlock;
-	statistics: IStatistics;
-	banner: IBanner;
-	logoCloud: ILogoCloud;
-	content: IContent;
-}[];
-
-type TSinglePage = {
+export type TSinglePage = {
 	id: string;
 	slug: string;
 	parentPage: {
@@ -42,29 +48,7 @@ type TSinglePage = {
 	}[];
 } | undefined;
 
-type TAllPages = {
-	pages: TSinglePage[];
-};
-
-const getPagesQuery = gql`
-	{
-		pages {
-			id
-			slug
-			parentPage {
-				... on Page {
-					slug
-				}
-			}
-			childPages {
-				slug
-			}
-		}
-	}
-`;
-
-export const getPage = async ({ filePath }: { filePath?: string; }) => {
-	let allPages: TAllPages;
+export const getPage = async ({ filePath }: { filePath?: string; }): Promise<IPage> => {
 	const fileParts = filePath ? filePath.split('/') : [];
 	const slug = fileParts.at(-1);
 
@@ -73,29 +57,7 @@ export const getPage = async ({ filePath }: { filePath?: string; }) => {
 			headers: {},
 		});
 
-		const cache = NotRedis.getInstance();
-		const cacheKey = createCacheKey('id', 'pages', {});
-
-		const cachedResult = cache.get(cacheKey);
-		if (cachedResult) {
-			allPages = cachedResult as TAllPages;
-		} else {
-			const startTime = performance.now();
-			if (filePath === undefined) {
-				throw new Error('Page not found');
-			}
-			allPages = await hygraph.request(getPagesQuery);
-			if (!allPages) {
-				throw new Error('Page not found');
-			}
-			const endTime = performance.now();
-			const responseTime = (endTime - startTime).toFixed(2);
-			console.log(
-				`${tc.blue('Hygraph')} ${tc.dim('getPages')} ${tc.dim(allPages.pages.length.toString())} (${responseTime}ms)`,
-			);
-
-			cache.set(cacheKey, allPages);
-		}
+		const allPages = await getAllPages();
 
 		const thisPage = allPages.pages.find((page) =>
 			fileParts.length > 1
@@ -120,15 +82,23 @@ export const getPage = async ({ filePath }: { filePath?: string; }) => {
 		const pageQuery = gql`
 			{
 				page(where: { id: "${thisPage.id}" }) {
+					id
 					pageName
+					seoDescription
+					slug
+					introduction
 					sections {
 						__typename
-						${HeroFragment}
-						${FeatureFragment}
-						${StatisticsFragment}
+						${ArticleCardsFragment}
+						${AuthorCardFragment}
 						${BannerFragment}
-						${LogoCloudFragment}
+						${CardListFragment}
 						${ContentFragment}
+						${FeatureFragment}
+						${HeroFragment}
+						${LogoCloudFragment}
+						${StatisticsFragment}
+						${DividerFragment}
 					}
 				}
 			}
@@ -138,20 +108,21 @@ export const getPage = async ({ filePath }: { filePath?: string; }) => {
 		if (!page) {
 			throw new Response('Page not found', { status: 404 });
 		}
+
 		const pageEndTime = performance.now();
 		const responseTime = (pageEndTime - pageStartTime).toFixed(2);
 		console.log(
 			`${tc.blue('Hygraph')} ${tc.dim('getPage')} ${tc.dim(thisPage.id)} (${responseTime}ms)`,
 		);
 		pageCache.set(pageCacheKey, page);
-		return page;
+		return fixThePage<IPage>(page);
 	} catch (error) {
 		console.error('Error fetching page data:', error);
 		throw new Response('Page not found', { status: 404 });
 	}
 };
 
-export const getPreviewPage = async (id: string) => {
+export const getPreviewPage = async (id: string, isHome?: boolean): Promise<IPage | IHomepage> => {
 	const hygraph = new GraphQLClient(process.env.HYGRAPH_ENDPOINT as string, {
 		headers: {
 			Authorization: `Bearer ${process.env.HYGRAPH_DEV_AUTH_TOKEN}`,
@@ -159,29 +130,60 @@ export const getPreviewPage = async (id: string) => {
 	});
 
 	try {
-		const pageQuery = gql`
-				{
-					page(where: { id: "${id}" }, stage: DRAFT) {
+		const pageQuery = isHome ? gql`{
+					homepage(where: { siteName: ${process.env.SITE_NAME} }, stage: DRAFT) {
 						pageName
+						seoDescription
 						sections {
 							__typename
-							${HeroFragment}
-							${FeatureFragment}
-							${StatisticsFragment}
+							${ArticleCardsFragment}
+							${CardListFragment}
 							${BannerFragment}
+							${ContentFragment}
+							${FeatureFragment}
+							${HeroFragment}
+							${LogoCloudFragment}
+							${DividerFragment}
+						}
+					}
+				}` : gql`
+				{
+					page(where: { id: "${id}" }, stage: DRAFT) {
+						id
+						pageName
+						seoDescription
+						sections {
+							__typename
+							${ArticleCardsFragment}
+							${AuthorCardFragment}
+							${BannerFragment}
+							${CardListFragment}
+							${ContentFragment}
+							${FeatureFragment}
+							${HeroFragment}
+							${LogoCloudFragment}
+							${StatisticsFragment}
+							${DividerFragment}
 						}
 					}
 				}
 			`;
 
+		if (isHome) {
+			const { homepage }: { homepage: IHomepage } = await hygraph.request(pageQuery);
+			if (!homepage) {
+				throw new Response('Page not found', { status: 404 });
+			}
+			return fixThePage<IHomepage>(homepage);
+		}
 		const { page }: { page: IPage } = await hygraph.request(pageQuery);
 		if (!page) {
 			throw new Response('Page not found', { status: 404 });
 		}
-		return page;
+
+		return fixThePage<IPage>(page);
 	} catch (error) {
 		console.error('Error fetching page data:', error);
 		throw new Response('Page not found', { status: 404 });
 	}
-
 };

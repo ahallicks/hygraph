@@ -1,5 +1,6 @@
 {
 	"include": [
+		"global.d.ts",
 		"**/*",
 		"**/.server/**/*",
 		"**/.client/**/*",

@@ -1,15 +1,25 @@
 @import 'tailwindcss';
 
+@plugin '@tailwindcss/typography';
+
 @theme {
-	--font-sans: Inter, sans-serif;
+	--font-sans: 'Inter', sans-serif;
 	--font-sans--font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
 }
 
 html,
 body {
-	@apply bg-white dark:bg-gray-950;
+	@apply bg-white dark:bg-gray-900;
 
 	@media (prefers-color-scheme: dark) {
 		color-scheme: dark;
+	}
+}
+
+.segment {
+	@apply py-16 lg:py-32;
+
+	+ .segment {
+		@apply pt-0;
 	}
 }

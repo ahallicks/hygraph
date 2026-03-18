@@ -662,7 +662,6 @@ export class NotRedis {
 	}
 }
 
-
 type CachePart = string | number | boolean | object;
 
 export const createCacheKey = (
