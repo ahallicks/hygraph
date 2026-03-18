@@ -9,7 +9,12 @@ jobs:
   deploy:
     name: Deploy app
     runs-on: ubuntu-latest
-    concurrency: deploy-group    # optional: ensure only one action runs at a time
+    concurrency: deploy-group # optional: ensure only one action runs at a time
+    env:
+      HYGRAPH_ENDPOINT: ${{ secrets.HYGRAPH_ENDPOINT }}
+      HYGRAPH_STUDIO_URL: ${{ secrets.HYGRAPH_STUDIO_URL }}
+      HYGRAPH_DEV_AUTH_TOKEN: ${{ secrets.HYGRAPH_DEV_AUTH_TOKEN }}
+      SITE_NAME: ${{ secrets.SITE_NAME }}
     steps:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
