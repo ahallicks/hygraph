@@ -44,7 +44,7 @@ export const HeaderComponent: React.FC<IGlobalData> = ({
 		<header className="sticky inset-x-0 top-0 z-40 backdrop-blur-md">
 			<nav
 				aria-label="Global"
-				className="flex items-center justify-between px-6 py-4 lg:py-6 lg:px-8"
+				className="flex items-center justify-between px-6 py-4 lg:px-8 lg:py-6"
 			>
 				<div className="flex lg:flex-1">
 					<Link to="/" rel="home" className="-m-1.5 p-1.5">
@@ -52,7 +52,7 @@ export const HeaderComponent: React.FC<IGlobalData> = ({
 						<img
 							alt={logoAltText}
 							src={logo.url}
-							className="w-auto h-8"
+							className="h-8 w-auto"
 						/>
 					</Link>
 				</div>
@@ -75,7 +75,7 @@ export const HeaderComponent: React.FC<IGlobalData> = ({
 						{navigationLinks.map((item) => (
 							<li key={item.linkText}>
 								<Popover className="relative">
-									<PopoverButton className="inline-flex items-center font-semibold text-gray-700 dark:text-gray-300 gap-x-1 text-sm/6">
+									<PopoverButton className="inline-flex items-center gap-x-1 text-sm/6 font-semibold text-gray-700 dark:text-gray-300">
 										<span>{item.linkText}</span>
 										<Icon
 											icon="chevronDownIcon"
@@ -85,10 +85,10 @@ export const HeaderComponent: React.FC<IGlobalData> = ({
 									</PopoverButton>
 									<PopoverPanel
 										transition
-										className="absolute z-10 flex w-screen px-4 mt-5 transition -translate-x-1/2 bg-transparent left-1/2 max-w-max data-closed:translate-y-1 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
+										className="absolute left-1/2 z-10 mt-5 flex w-screen max-w-max -translate-x-1/2 bg-transparent px-4 transition data-closed:translate-y-1 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
 									>
 										{({ close }) => (
-											<div className="flex-auto w-screen max-w-md overflow-hidden bg-white shadow-lg rounded-3xl text-sm/6 outline-1 outline-gray-900/5 dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+											<div className="w-screen max-w-md flex-auto overflow-hidden rounded-3xl bg-white text-sm/6 shadow-lg outline-1 outline-gray-900/5 dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
 												{item.page.childPages
 													?.length ? (
 													<ul className="p-4">
@@ -101,6 +101,9 @@ export const HeaderComponent: React.FC<IGlobalData> = ({
 																	}
 																	key={
 																		childPage.id
+																	}
+																	close={
+																		close
 																	}
 																/>
 															),
@@ -119,7 +122,7 @@ export const HeaderComponent: React.FC<IGlobalData> = ({
 																	.pageIcon
 															}
 															aria-hidden="true"
-															className="flex-none text-gray-500 size-5"
+															className="size-5 flex-none text-gray-500"
 														/>
 														View all {item.linkText}
 													</Link>
@@ -165,22 +168,22 @@ export const MobileNav: React.FC<
 	<Dialog open={open} onClose={setOpen} className="relative z-50">
 		<DialogBackdrop
 			transition
-			className="fixed inset-0 transition-opacity duration-500 ease-in-out bg-gray-500/75 data-closed:opacity-0"
+			className="fixed inset-0 bg-gray-500/75 transition-opacity duration-500 ease-in-out data-closed:opacity-0"
 		/>
 
 		<div className="fixed inset-0 overflow-hidden">
 			<div className="absolute inset-0 overflow-hidden">
-				<div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none sm:pl-16">
+				<div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
 					<DialogPanel
 						transition
-						className="relative w-screen max-w-md transition duration-500 ease-in-out transform pointer-events-auto data-closed:translate-x-full sm:duration-700"
+						className="pointer-events-auto relative w-screen max-w-md transform transition duration-500 ease-in-out data-closed:translate-x-full sm:duration-700"
 					>
 						<TransitionChild>
-							<div className="absolute top-0 left-0 flex pt-4 pr-2 -ml-8 duration-500 ease-in-out data-closed:opacity-0 sm:-ml-10 sm:pr-4">
+							<div className="absolute top-0 left-0 -ml-8 flex pt-4 pr-2 duration-500 ease-in-out data-closed:opacity-0 sm:-ml-10 sm:pr-4">
 								<button
 									type="button"
 									onClick={() => setOpen(false)}
-									className="relative text-gray-300 rounded-md hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+									className="relative rounded-md text-gray-300 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
 								>
 									<span className="absolute -inset-2.5" />
 									<span className="sr-only">Close panel</span>
@@ -192,24 +195,24 @@ export const MobileNav: React.FC<
 								</button>
 							</div>
 						</TransitionChild>
-						<div className="relative flex flex-col h-full py-6 overflow-y-auto bg-white shadow-xl dark:bg-gray-900">
+						<div className="relative flex h-full flex-col overflow-y-auto bg-white py-6 shadow-xl dark:bg-gray-900">
 							<div className="px-4 sm:px-6">
 								<DialogTitle className="flex items-center gap-4 text-base font-semibold text-gray-900 dark:text-gray-300">
 									<img
 										alt={logoAltText}
 										src={logo.url}
-										className="w-auto h-8"
+										className="h-8 w-auto"
 									/>
 									{title}
 								</DialogTitle>
 							</div>
-							<div className="relative flex-1 px-4 mt-6 sm:px-6">
-								<ul className="py-6 space-y-2">
+							<div className="relative mt-6 flex-1 px-4 sm:px-6">
+								<ul className="space-y-2 py-6">
 									{navigationLinks.map((item) => (
 										<li key={item.linkText}>
 											<Link
 												to={buildPageUrl(item)}
-												className="flex items-center justify-between px-3 py-2 font-semibold text-gray-900 bg-gray-100 rounded-lg text-base/7 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-800"
+												className="flex items-center justify-between rounded-lg bg-gray-100 px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-800"
 											>
 												{item.linkText}{' '}
 												<Icon
@@ -256,20 +259,21 @@ const SubNavItem: React.FC<{
 		introduction: string;
 		pageIcon: string;
 	};
-}> = ({ item, childPage }) => (
-	<li className="relative flex p-4 rounded-lg group gap-x-6 hover:bg-gray-50 dark:hover:bg-white/5">
-		<div className="flex items-center justify-center flex-none mt-1 rounded-lg size-11 bg-gray-50 group-hover:bg-white dark:bg-gray-700/50 dark:group-hover:bg-gray-700">
+	close?: () => void;
+}> = ({ item, childPage, close }) => (
+	<li className="group relative flex gap-x-6 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-white/5">
+		<div className="mt-1 flex size-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white dark:bg-gray-700/50 dark:group-hover:bg-gray-700">
 			<Icon
 				icon={childPage.pageIcon}
 				aria-hidden="true"
-				className="text-gray-600 size-6 group-hover:text-indigo-600 dark:text-gray-400 dark:group-hover:text-white"
+				className="size-6 text-gray-600 group-hover:text-indigo-600 dark:text-gray-400 dark:group-hover:text-white"
 			/>
 		</div>
 		<div>
 			<Link
 				to={`/${item.page.slug}/${childPage.slug}`}
 				className="text-sm font-semibold md:text-base dark:text-gray-300"
-				onClick={() => close()}
+				onClick={() => close && close()}
 			>
 				{childPage.pageName}
 				<span className="absolute inset-0" />
