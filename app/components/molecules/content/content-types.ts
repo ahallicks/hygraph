@@ -1,7 +1,7 @@
-import type { TImage } from '~/types/global-types.ts';
+import type { TCategory, TImage } from '~/types/global-types.ts';
 import type { IFeatureBlock } from '../feature/feature-types.ts';
 import type { IBanner } from '../banner/banner-types.ts';
-import type { RichTextProps } from "@graphcms/rich-text-react-renderer";
+import type { RichTextProps } from '@graphcms/rich-text-react-renderer';
 
 export interface IArticle {
 	__typename: 'Article';
@@ -23,17 +23,5 @@ export interface IContent {
 	introduction?: string;
 	contentImage?: TImage;
 	article?: IBanner[] | IArticle[] | IFeatureBlock[];
+	categories?: TCategory[];
 }
-
-/**
- * {
-		__typename: 'Article' | 'FeatureBlock' | 'Banner';
-		id: string;
-		content?: {
-			raw?: RichTextProps['content'];
-			json?: RichTextProps['content'];
-			references?: RichTextProps['references'];
-		};
-		features?: IFeature[];
-	}
- */

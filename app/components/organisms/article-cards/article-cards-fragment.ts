@@ -30,6 +30,16 @@ export const ArticleCardsFragment = `
 							slug
 						}
 					}
+					categories: articleCategories {
+						... on ArticleCategory {
+							id
+							categoryName
+							description {
+								raw
+							}
+							slug
+						}
+					}
 					sections {
 						__typename
 						... on AuthorCard {

@@ -16,6 +16,7 @@ import {
 	Divider,
 	DividerWithText,
 } from '~/components/atoms/divider/divider.tsx';
+import { RelatedArticles } from '~/components/organisms/related-articles/related-articles.tsx';
 
 export const PageSections: React.FC<{ page: IPage | IHomepage }> = ({
 	page,
@@ -47,7 +48,11 @@ export const PageSections: React.FC<{ page: IPage | IHomepage }> = ({
 					<LogoCloud {...section} contentId={page.id} />
 				) : null}
 				{section.__typename === 'Content' ? (
-					<Content {...section} contentId={page.id} />
+					<Content
+						{...section}
+						contentId={page.id}
+						categories={(page as IPage).categories}
+					/>
 				) : null}
 				{section.__typename === 'ArticleCards' ? (
 					<ArticleCards {...section} contentId={page.id} />
@@ -67,6 +72,12 @@ export const PageSections: React.FC<{ page: IPage | IHomepage }> = ({
 					) : (
 						<Divider />
 					)
+				) : null}
+				{section.__typename === 'RelatedArticles' ? (
+					<>
+						<Divider noSpacing={true} />
+						<RelatedArticles {...section} contentId={page.id} />
+					</>
 				) : null}
 			</Fragment>
 		))}

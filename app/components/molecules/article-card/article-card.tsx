@@ -5,6 +5,7 @@ import { Link } from 'react-router';
 import { formatDate } from '~/utils/date-utils.ts';
 
 import { AuthorCardMini } from '~/components/molecules/author-card/author-card.tsx';
+import { Categories } from '~/components/atoms/categories/categories.tsx';
 
 export const ArticleCard: React.FC<{
 	post: IArticleCard;
@@ -15,7 +16,7 @@ export const ArticleCard: React.FC<{
 	);
 	const author = authorCardSection?.author;
 	return (
-		<article className="flex max-w-xl flex-col items-start justify-between w-full p-8 bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-700 hover:-translate-y-1 transition duration-300 rounded-lg shadow shadow-black/10">
+		<article className="flex w-full max-w-xl flex-col items-start justify-between rounded-lg border border-gray-200 bg-white p-8 shadow shadow-black/10 transition duration-300 hover:-translate-y-1 dark:border-gray-700 dark:bg-gray-950">
 			<div className="flex items-center gap-x-4 text-xs">
 				<time
 					dateTime={post.published ? post.published : post.created}
@@ -37,16 +38,10 @@ export const ArticleCard: React.FC<{
 						</p>
 					) : null}
 				</time>
-				{/* <a
-				href={post.category.href}
-				className="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
-			>
-				{post.category.title}
-			</a> */}
 			</div>
 			<div className="group relative grow">
 				<h3
-					className="mt-3 text-lg/6 font-semibold text-gray-900 dark:text-gray-300 group-hover:text-gray-600 dark:group-hover:text-gray-400"
+					className="mt-3 text-lg/6 font-semibold text-gray-900 group-hover:text-gray-600 dark:text-gray-300 dark:group-hover:text-gray-400"
 					data-hygraph-entry-id={contentId}
 					data-hygraph-field-api-id="pageName"
 					data-hygraph-component-chain={`[{"fieldApiId":"Sections","instanceId":"${contentId}"},{"fieldApiId":"Article Cards","instanceId":"${contentId}"},{"fieldApiId":"pageReference","instanceId":"${contentId}"},{"fieldApiId":"childPages","instanceId":"${contentId}"},{"fieldApiId":"pageName","instanceId":"${post.id}"}]`}
@@ -65,6 +60,7 @@ export const ArticleCard: React.FC<{
 					{post.introduction}
 				</p>
 			</div>
+			<Categories categories={post.categories || []} />
 			{author ? (
 				<AuthorCardMini
 					__typename="AuthorCard"

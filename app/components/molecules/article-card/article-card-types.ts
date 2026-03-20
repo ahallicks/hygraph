@@ -1,4 +1,4 @@
-import type { TAuthor } from '~/types/global-types.ts';
+import type { TAuthor, TCategory } from '~/types/global-types.ts';
 import type { IAuthorCard } from '~/components/molecules/author-card/author-card-types.ts';
 
 export interface IArticleCard {
@@ -15,4 +15,5 @@ export interface IArticleCard {
 		slug: string;
 	};
 	sections?: IAuthorCard[];
-};
+	categories?: TCategory[];
+}
