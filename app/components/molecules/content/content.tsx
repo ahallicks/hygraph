@@ -4,10 +4,11 @@ import type { RichTextProps } from '@graphcms/rich-text-react-renderer';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { RichText } from '@graphcms/rich-text-react-renderer';
 
-import { SingleFeature } from '../feature/feature.tsx';
-import { CodePen } from '~/components/atoms/codepen/codepen.tsx';
-import { YouTube } from '~/components/atoms/youtube/youtube.tsx';
+import { Categories } from '~/components/atoms/categories/categories.tsx';
 import { BannerSmall } from '../banner/banner.tsx';
+import { CodePen } from '~/components/atoms/codepen/codepen.tsx';
+import { SingleFeature } from '../feature/feature.tsx';
+import { YouTube } from '~/components/atoms/youtube/youtube.tsx';
 
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
@@ -71,7 +72,7 @@ const SubContent: React.FC<{
 	article: IContent['article'];
 	contentId: string;
 }> = ({ id, article, contentId }) => (
-	<div className="prose dark:prose-invert lg:prose-xl max-w-none">
+	<div className="prose max-w-none lg:prose-xl dark:prose-invert">
 		{article && article.length > 0
 			? article.map((articleItem, index) => {
 					if (articleItem.__typename === 'Article') {
@@ -136,6 +137,7 @@ const Title: React.FC<IContent> = ({
 	title,
 	pretitle,
 	introduction,
+	categories,
 	contentId,
 }) => (
 	<>
@@ -167,6 +169,7 @@ const Title: React.FC<IContent> = ({
 				{introduction}
 			</p>
 		) : null}
+		<Categories categories={categories || []} />
 	</>
 );
 
@@ -177,9 +180,10 @@ export const Content: React.FC<IContent> = ({
 	introduction,
 	contentImage,
 	article,
+	categories,
 	contentId,
 }) => (
-	<section className="segment relative isolate overflow-hidden bg-white dark:bg-gray-900 px-6 py-24 sm:py-32 lg:overflow-visible lg:px-0">
+	<section className="segment relative isolate overflow-hidden bg-white px-6 py-24 sm:py-32 lg:overflow-visible lg:px-0 dark:bg-gray-900">
 		<div className="absolute inset-0 -z-10 overflow-hidden">
 			<svg
 				aria-hidden="true"
@@ -218,7 +222,7 @@ export const Content: React.FC<IContent> = ({
 		{contentImage ? (
 			<div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-2 lg:items-start lg:gap-y-10">
 				<div className="lg:col-span-2 lg:col-start-1 lg:row-start-1 lg:mx-auto lg:grid lg:w-full lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8">
-					<div className="lg:pr-4 prose">
+					<div className="prose lg:pr-4">
 						<div className="lg:max-w-lg">
 							<Title
 								__typename={'Content'}
@@ -227,6 +231,7 @@ export const Content: React.FC<IContent> = ({
 								pretitle={pretitle}
 								introduction={introduction}
 								contentId={contentId}
+								categories={categories}
 							/>
 						</div>
 					</div>
@@ -247,9 +252,9 @@ export const Content: React.FC<IContent> = ({
 				</div>
 			</div>
 		) : (
-			<div className="mx-auto flex flex-col max-w-2xl lg:mx-0 lg:max-w-none lg:items-start gap-y-16 lg:gap-y-10">
+			<div className="mx-auto flex max-w-2xl flex-col gap-y-16 lg:mx-0 lg:max-w-none lg:items-start lg:gap-y-10">
 				<div className="lg:col-span-2 lg:col-start-1 lg:row-start-1 lg:mx-auto lg:w-full lg:max-w-5xl lg:gap-x-8 lg:px-8">
-					<div className="lg:pr-4 prose">
+					<div className="prose lg:pr-4">
 						<Title
 							__typename={'Content'}
 							id={id}
@@ -257,6 +262,7 @@ export const Content: React.FC<IContent> = ({
 							pretitle={pretitle}
 							introduction={introduction}
 							contentId={contentId}
+							categories={categories}
 						/>
 					</div>
 				</div>

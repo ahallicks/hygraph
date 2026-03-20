@@ -49,6 +49,8 @@ const config = [
 		'plugin:react-hooks/recommended',
 		'plugin:import/recommended',
 		'plugin:import/typescript',
+		// 'plugin:testing-library/recommended',
+		// 'plugin:jest-dom/recommended',
 	),
 	{
 		languageOptions: {
@@ -63,7 +65,7 @@ const config = [
 		},
 
 		settings: {
-			react: {
+			'react': {
 				version: 'detect',
 			},
 			'import/resolver': {
@@ -90,7 +92,7 @@ const config = [
 			],
 
 			'no-mixed-spaces-and-tabs': ['warn', 'smart-tabs'],
-			eqeqeq: ['error', 'always'],
+			'eqeqeq': ['error', 'always'],
 			'import/extensions': [
 				'error',
 				'ignorePackages',
