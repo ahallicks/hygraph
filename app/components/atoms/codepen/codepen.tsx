@@ -15,18 +15,12 @@ export const CodePen: React.FC<ICodepen> = ({
 }) => {
 	const inlineStyles = {
 		height: '500px',
-		boxSizing: 'border-box',
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
 		border: '2px solid',
-		margin: '1em 0',
-		padding: '1em',
 	} as React.CSSProperties;
 	return (
 		<>
-			<p
-				className="codepen"
+			<div
+				className="codepen not-prose my-12 flex items-center justify-center p-6"
 				data-height="500"
 				data-default-tab="result"
 				data-slug-hash={codepenId}
@@ -41,7 +35,7 @@ export const CodePen: React.FC<ICodepen> = ({
 					<a href={`https://codepen.io/${author}`}>@{author}</a>) on{' '}
 					<a href="https://codepen.io">CodePen</a>.
 				</span>
-			</p>
+			</div>
 			<script
 				async
 				src="https://cpwebassets.codepen.io/assets/embed/ei.js"

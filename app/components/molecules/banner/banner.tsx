@@ -17,7 +17,7 @@ const BannerImage: React.FC<{
 	contentId: string;
 }> = ({ id, bannerImage, flipped, contentId }) => (
 	<div
-		className="relative mt-16 h-80 lg:mt-8 flex-1"
+		className="relative mt-16 h-80 flex-1 lg:mt-8"
 		data-hygraph-entry-id={contentId}
 		data-hygraph-field-api-id="image"
 		data-hygraph-component-chain={`[{"fieldApiId":"Sections","instanceId":"${id}"},{"fieldApiId":"Banner","instanceId":"${id}"}]`}
@@ -51,8 +51,8 @@ export const BannerSmall: React.FC<IBanner> = ({
 	flipped,
 	contentId,
 }) => (
-	<section className="segment  mx-auto max-w-7xl px-6 lg:px-8">
-		<div className="relative isolate overflow-hidden bg-gray-900 dark:ring-1 dark:ring-gray-700 px-6 pt-16 shadow-2xl sm:rounded-3xl sm:px-16 md:pt-24 lg:flex lg:gap-x-20 lg:px-24 lg:pt-0">
+	<section className="segment mx-auto max-w-7xl px-6 lg:px-8">
+		<div className="relative isolate overflow-hidden bg-gray-900 px-6 pt-16 shadow-2xl sm:rounded-3xl sm:px-16 md:pt-24 lg:flex lg:gap-x-20 lg:px-24 lg:pt-0 dark:ring-1 dark:ring-gray-700">
 			<svg
 				viewBox="0 0 1024 1024"
 				aria-hidden="true"
@@ -89,13 +89,15 @@ export const BannerSmall: React.FC<IBanner> = ({
 				>
 					{title}
 				</h2>
-				<div
-					data-hygraph-entry-id={contentId}
-					data-hygraph-field-api-id="content"
-					data-hygraph-component-chain={`[{"fieldApiId":"Sections","instanceId":"${id}"},{"fieldApiId":"Banner","instanceId":"${id}"}]`}
-				>
-					<RichText content={content.raw} renderers={smallRte} />
-				</div>
+				{content?.raw ? (
+					<div
+						data-hygraph-entry-id={contentId}
+						data-hygraph-field-api-id="content"
+						data-hygraph-component-chain={`[{"fieldApiId":"Sections","instanceId":"${id}"},{"fieldApiId":"Banner","instanceId":"${id}"}]`}
+					>
+						<RichText content={content.raw} renderers={smallRte} />
+					</div>
+				) : null}
 				{links.length ? (
 					<div
 						className="mt-10 flex items-center justify-center gap-x-6 lg:justify-start"

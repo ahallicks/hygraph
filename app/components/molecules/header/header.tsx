@@ -272,13 +272,13 @@ const SubNavItem: React.FC<{
 		<div>
 			<Link
 				to={`/${item.page.slug}/${childPage.slug}`}
-				className="text-sm font-semibold md:text-base dark:text-gray-300"
+				className="text-sm font-semibold dark:text-gray-300"
 				onClick={() => close && close()}
 			>
 				{childPage.pageName}
 				<span className="absolute inset-0" />
 			</Link>
-			<p className="mt-1 text-xs text-gray-600 md:text-base dark:text-gray-400">
+			<p className="mt-1 text-xs text-gray-600 md:text-sm dark:text-gray-400">
 				{childPage.introduction}
 			</p>
 		</div>
