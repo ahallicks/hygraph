@@ -5,6 +5,11 @@ import {
 import type { IRelatedArticles } from './related-articles-types.ts';
 
 import { ArticleCard } from '~/components/molecules/article-card/article-card.tsx';
+import {
+	Carousel,
+	CarouselButtons,
+	CarouselContainer,
+} from '~/components/layouts/carousel/carousel.tsx';
 
 const rte: RichTextProps['renderers'] = {
 	p: ({ children }) => (
@@ -25,7 +30,7 @@ export const RelatedArticles: React.FC<IRelatedArticles> = ({
 		<section className="segment bg-white dark:bg-gray-900">
 			<div className="mx-auto max-w-7xl px-6 lg:px-8">
 				{relatedTitle || relatedContent ? (
-					<div className="mx-auto max-w-2xl lg:mx-0">
+					<div className="mx-auto mb-8 max-w-2xl lg:mx-0">
 						{relatedTitle ? (
 							<h2
 								className="text-4xl font-semibold tracking-tight text-pretty text-gray-900 sm:text-5xl dark:text-gray-300"
@@ -45,16 +50,19 @@ export const RelatedArticles: React.FC<IRelatedArticles> = ({
 					</div>
 				) : null}
 				{pages?.length ? (
-					<ul className="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-8 border-t border-gray-200 pt-10 sm:mt-16 sm:pt-16 md:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-3 dark:border-gray-700">
-						{pages.map((post) => (
-							<li key={post.id} className="flex">
-								<ArticleCard
-									post={post}
-									contentId={contentId}
-								/>
-							</li>
-						))}
-					</ul>
+					<CarouselContainer steps={1}>
+						<CarouselButtons />
+						<Carousel>
+							{pages.map((post) => (
+								<li key={post.id} className="flex snap-start">
+									<ArticleCard
+										post={post}
+										contentId={contentId}
+									/>
+								</li>
+							))}
+						</Carousel>
+					</CarouselContainer>
 				) : null}
 			</div>
 		</section>

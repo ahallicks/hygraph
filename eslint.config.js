@@ -49,8 +49,6 @@ const config = [
 		'plugin:react-hooks/recommended',
 		'plugin:import/recommended',
 		'plugin:import/typescript',
-		// 'plugin:testing-library/recommended',
-		// 'plugin:jest-dom/recommended',
 	),
 	{
 		languageOptions: {
@@ -124,54 +122,6 @@ const config = [
 				},
 			],
 			'import/no-unresolved': 'error',
-			/* 'import/order': [
-				// type imports
-				// npm packages
-				// utils/contexts/services/hooks
-				// components
-				// styles
-
-				'error',
-				{
-					groups: [
-						'type',
-						'builtin',
-						'external',
-						'internal',
-						'parent',
-						'index',
-						'sibling',
-						'unknown',
-					],
-					pathGroups: [
-						{
-							pattern: '@**',
-							group: 'external',
-						},
-						{
-							pattern: '~/components/**',
-							group: 'internal',
-							position: 'after',
-						},
-						{
-							pattern: './components/**',
-							group: 'sibling',
-							position: 'before',
-						},
-						{
-							pattern: './*.css',
-							group: 'sibling',
-							position: 'after',
-						},
-					],
-					pathGroupsExcludedImportTypes: ['type'],
-					'newlines-between': 'always',
-					alphabetize: {
-						order: 'asc',
-						caseInsensitive: true,
-					},
-				},
-			], */
 		},
 	},
 ];

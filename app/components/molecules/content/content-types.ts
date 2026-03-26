@@ -12,6 +12,7 @@ export interface IArticle {
 		json?: RichTextProps['content'];
 		references?: RichTextProps['references'];
 	};
+	articleImage?: TImage;
 }
 
 export interface IContent {

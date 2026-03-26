@@ -2,6 +2,10 @@
 
 @plugin '@tailwindcss/typography';
 
+@plugin 'tailwind-scrollbar' {
+	nocompatible: true;
+}
+
 @theme {
 	--font-sans: 'Inter', sans-serif;
 	--font-sans--font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
@@ -21,5 +25,23 @@ body {
 
 	+ .segment {
 		@apply pt-0;
+	}
+}
+
+.carousel {
+	gap: clamp(16px, 14.609px + 0.435vw, 20px);
+	grid-auto-columns: clamp(18rem, 250.783px + 9.13vw, 23rem);
+	justify-content: safe start;
+	scroll-snap-type: x mandatory;
+}
+
+.isDragging {
+	scroll-behavior: unset;
+	scroll-snap-align: unset;
+	scroll-snap-type: unset;
+
+	& > * {
+		pointer-events: none;
+		user-select: none;
 	}
 }

@@ -1,4 +1,4 @@
-import type { IContent } from './content-types.ts';
+import type { IArticle, IContent } from './content-types.ts';
 import type { RichTextProps } from '@graphcms/rich-text-react-renderer';
 
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -31,13 +31,23 @@ const rte: RichTextProps['renderers'] = {
 	),
 	embed: {
 		CodeBlock: ({ codeBlock, language }) => (
-			<SyntaxHighlighter
-				language={language}
-				style={oneDark}
-				showLineNumbers
-			>
-				{codeBlock}
-			</SyntaxHighlighter>
+			<div className="not-prose group relative mb-8">
+				<SyntaxHighlighter
+					language={language}
+					style={oneDark}
+					showLineNumbers
+				>
+					{codeBlock}
+				</SyntaxHighlighter>
+				<button
+					className="absolute top-1 right-1 hidden rounded bg-gray-200 px-3 py-1 text-sm text-gray-700 group-hover:block hover:bg-gray-300 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:outline-none dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-gray-500"
+					onClick={() => {
+						navigator.clipboard.writeText(codeBlock);
+					}}
+				>
+					Copy
+				</button>
+			</div>
 		),
 		Codepen: ({ id, codepenId, codepenUrl, codepenTitle, author }) => (
 			<CodePen
@@ -67,6 +77,53 @@ const rte: RichTextProps['renderers'] = {
 	},
 };
 
+const ArticleContent: React.FC<{
+	id: IContent['id'];
+	article: IArticle;
+	contentId: string;
+}> = ({ id, article, contentId }) => {
+	if (!article?.content?.json) return null;
+	return article.articleImage ? (
+		<div className="grid lg:grid-cols-2 lg:items-start lg:gap-x-16">
+			<div className="not-prose -ml-12 px-12 pt-12 pb-6 lg:sticky lg:top-4 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+				<img
+					alt=""
+					src={article.articleImage.url}
+					className="w-3xl max-w-none rounded-xl bg-gray-900 shadow-xl ring-1 ring-gray-400/10 sm:w-228"
+				/>
+			</div>
+			<div
+				className="text-base/7 text-gray-600 *:last:mb-0"
+				data-hygraph-entry-id={contentId}
+				data-hygraph-field-api-id="content"
+				data-hygraph-component-chain={`[{"fieldApiId":"Sections","instanceId":"${id}"},{"fieldApiId":"Content","instanceId":"${contentId}"},{"fieldApiId":"Article","instanceId":"${article.id}"}]`}
+				key={article.id}
+			>
+				<RichText
+					key={article.id}
+					content={article.content.json}
+					renderers={rte}
+					references={article.content.references}
+				/>
+			</div>
+		</div>
+	) : (
+		<div
+			className="text-base/7 text-gray-600 *:last:mb-0"
+			data-hygraph-entry-id={contentId}
+			data-hygraph-field-api-id="content"
+			data-hygraph-component-chain={`[{"fieldApiId":"Sections","instanceId":"${id}"},{"fieldApiId":"Content","instanceId":"${contentId}"},{"fieldApiId":"Article","instanceId":"${article.id}"}]`}
+		>
+			<RichText
+				key={article.id}
+				content={article.content.json}
+				renderers={rte}
+				references={article.content.references}
+			/>
+		</div>
+	);
+};
+
 const SubContent: React.FC<{
 	id: IContent['id'];
 	article: IContent['article'];
@@ -77,20 +134,12 @@ const SubContent: React.FC<{
 			? article.map((articleItem, index) => {
 					if (articleItem.__typename === 'Article') {
 						return articleItem.content?.json ? (
-							<div
-								className="text-base/7 text-gray-600"
-								data-hygraph-entry-id={contentId}
-								data-hygraph-field-api-id="content"
-								data-hygraph-component-chain={`[{"fieldApiId":"Sections","instanceId":"${id}"},{"fieldApiId":"Content","instanceId":"${id}"},{"fieldApiId":"Content","instanceId":"${id}"},{"fieldApiId":"Article","instanceId":"${articleItem.id}"}]`}
+							<ArticleContent
+								id={id}
+								article={articleItem}
+								contentId={contentId}
 								key={articleItem.id}
-							>
-								<RichText
-									key={articleItem.id}
-									content={articleItem.content.json}
-									renderers={rte}
-									references={articleItem.content.references}
-								/>
-							</div>
+							/>
 						) : null;
 					}
 					if (
@@ -183,7 +232,7 @@ export const Content: React.FC<IContent> = ({
 	categories,
 	contentId,
 }) => (
-	<section className="segment relative isolate overflow-hidden bg-white px-6 py-24 sm:py-32 lg:overflow-visible lg:px-0 dark:bg-gray-900">
+	<section className="segment relative isolate overflow-hidden bg-white px-6 py-24 contain-paint sm:py-32 lg:overflow-visible lg:px-0 dark:bg-gray-900">
 		<div className="absolute inset-0 -z-10 overflow-hidden">
 			<svg
 				aria-hidden="true"
@@ -225,7 +274,7 @@ export const Content: React.FC<IContent> = ({
 					<div className="prose lg:pr-4">
 						<div className="lg:max-w-lg">
 							<Title
-								__typename={'Content'}
+								__typename="Content"
 								id={id}
 								title={title}
 								pretitle={pretitle}
@@ -256,7 +305,7 @@ export const Content: React.FC<IContent> = ({
 				<div className="lg:col-span-2 lg:col-start-1 lg:row-start-1 lg:mx-auto lg:w-full lg:max-w-5xl lg:gap-x-8 lg:px-8">
 					<div className="prose lg:pr-4">
 						<Title
-							__typename={'Content'}
+							__typename="Content"
 							id={id}
 							title={title}
 							pretitle={pretitle}

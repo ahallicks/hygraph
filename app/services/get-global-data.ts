@@ -82,7 +82,7 @@ const globalQuery = gql`
 								}
 							}
 						}
-						childPages (first: 5) {
+						childPages (last: 5) {
 							... on Page {
 								id
 								pageName
@@ -132,6 +132,13 @@ export const getGlobalData = async (): Promise<IGlobalData> => {
 	console.log(
 		`${tc.blue('Hygraph')} ${tc.dim('getPages')} ${tc.dim(header.siteName)} (${responseTime}ms)`,
 	);
+
+	// We need to loop through the childPages and reverse their order
+	header.navigationLinks.forEach((link: INavLink) => {
+		if (link.page && link.page.childPages) {
+			link.page.childPages.reverse();
+		}
+	});
 
 	cache.set(cacheKey, header);
 	return header;

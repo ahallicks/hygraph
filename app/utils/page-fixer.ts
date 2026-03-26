@@ -55,6 +55,12 @@ export const fixThePage = <T>(page: IPage | IHomepage): T => {
 					}
 				},
 			);
+			articleCardsSection.pageReference.childPages =
+				articleCardsSection.pageReference.childPages.sort(
+					(a, b) =>
+						new Date(a.created).getTime() -
+						new Date(b.created).getTime(),
+				);
 		});
 	}
 
@@ -102,7 +108,7 @@ export const fixThePage = <T>(page: IPage | IHomepage): T => {
 						);
 					}
 				});
-				relatedArticlesSection.pages = uniquePages;
+				relatedArticlesSection.pages = uniquePages.reverse();
 			}
 		}
 	}

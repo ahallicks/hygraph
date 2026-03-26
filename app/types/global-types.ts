@@ -43,3 +43,5 @@ export type TCategory = {
 	};
 	slug: string;
 };
+
+export type TDirection = 'next' | 'previous';

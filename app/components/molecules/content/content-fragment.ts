@@ -46,6 +46,11 @@ export const ContentFragment = `
 					}
 				}
 			}
+			articleImage: image {
+				width
+				height
+				url
+			}
 		}
 		... on FeatureBlock {
 			id
