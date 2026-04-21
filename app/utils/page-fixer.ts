@@ -28,7 +28,10 @@ export const fixThePage = <T>(page: IPage | IHomepage): T => {
 		authorSection.author = fixTheAuthorGravatar(authorSection.author);
 	}
 
-	// Fix up the gravatar URL in sub sections
+	// Fix up the gravatar URL in article cards and flip the order so that the newest
+	// articles are at the top and the related articles section doesn't show the same
+	// articles every time. We need to loop through the child pages of the article
+	// cards to do this
 	if (
 		page.sections.find((section) => section.__typename === 'ArticleCards')
 	) {
@@ -58,8 +61,8 @@ export const fixThePage = <T>(page: IPage | IHomepage): T => {
 			articleCardsSection.pageReference.childPages =
 				articleCardsSection.pageReference.childPages.sort(
 					(a, b) =>
-						new Date(a.created).getTime() -
-						new Date(b.created).getTime(),
+						new Date(b.created).getTime() -
+						new Date(a.created).getTime(),
 				);
 		});
 	}

@@ -6,6 +6,7 @@ export interface IArticleCards {
 	contentId: string;
 	cardsTitle?: string;
 	subtitle?: string;
+	showCarousel?: boolean;
 	pageReference: {
 		id: string;
 		slug: string;

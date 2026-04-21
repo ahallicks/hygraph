@@ -113,13 +113,6 @@ export const getPage = async ({
 	const slug = fileParts.at(-1);
 
 	try {
-		const hygraph = new GraphQLClient(
-			process.env.HYGRAPH_ENDPOINT as string,
-			{
-				headers: {},
-			},
-		);
-
 		const allPages = await getAllPages();
 
 		const thisPage = allPages.pages.find((page) =>
@@ -147,6 +140,9 @@ export const getPage = async ({
 
 		// If required spit out the query to debug it
 		// writeFileSync('pageQuery.gql', pageQuery);
+		const hygraph = new GraphQLClient(
+			process.env.HYGRAPH_ENDPOINT as string,
+		);
 
 		const { page }: { page: IPage } = await hygraph.request(pageQuery);
 		if (!page) {

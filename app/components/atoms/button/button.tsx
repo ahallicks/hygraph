@@ -11,6 +11,7 @@ export type TButtonLink = {
 	id?: string;
 	linkText: string;
 	linkUrl: string;
+	openNewWindow?: boolean;
 	variation?: 'primary' | 'secondary' | 'tertiary';
 	className?: string;
 	page?: TPage | null;
@@ -31,6 +32,7 @@ const classes = {
 export const ButtonLink: React.FC<TButtonLinkWithChildren> = ({
 	linkText,
 	linkUrl,
+	openNewWindow,
 	variation = 'primary',
 	className = '',
 	children,
@@ -45,9 +47,10 @@ export const ButtonLink: React.FC<TButtonLinkWithChildren> = ({
 			className={clsx(
 				classes[variation],
 				className,
-				'px-3.5 py-2.5 text-sm rounded-md hover:transition-colors shadow-xs font-semibold focus-visible:outline-2 focus-visible:outline-offset-2',
+				'rounded-md px-3.5 py-2.5 text-sm font-semibold shadow-xs hover:transition-colors focus-visible:outline-2 focus-visible:outline-offset-2',
 			)}
 			{...rest}
+			target={openNewWindow ? '_blank' : undefined}
 		>
 			{linkText}
 			{children ? children : null}

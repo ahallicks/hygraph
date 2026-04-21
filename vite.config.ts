@@ -6,7 +6,7 @@ import { DevTools } from '@vitejs/devtools';
 // import basicSsl from '@vitejs/plugin-basic-ssl'
 
 export default defineConfig({
-	plugins: [/* basicSsl(),  */DevTools(), tailwindcss(), reactRouter()],
+	plugins: [/* basicSsl(),  */ DevTools(), tailwindcss(), reactRouter()],
 	resolve: {
 		tsconfigPaths: true,
 	},

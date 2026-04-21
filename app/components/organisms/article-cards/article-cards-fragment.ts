@@ -3,6 +3,7 @@ export const ArticleCardsFragment = `
 	id
 	cardsTitle: title
 	subtitle
+	showCarousel
 	pageReference {
 		...on Page {
 			id

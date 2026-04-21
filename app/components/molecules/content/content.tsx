@@ -41,8 +41,13 @@ const rte: RichTextProps['renderers'] = {
 				</SyntaxHighlighter>
 				<button
 					className="absolute top-1 right-1 hidden rounded bg-gray-200 px-3 py-1 text-sm text-gray-700 group-hover:block hover:bg-gray-300 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:outline-none dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-gray-500"
-					onClick={() => {
+					onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
 						navigator.clipboard.writeText(codeBlock);
+						const target = e.target as HTMLButtonElement;
+						target.textContent = 'Copied!';
+						setTimeout(() => {
+							target.textContent = 'Copy';
+						}, 2000);
 					}}
 				>
 					Copy
