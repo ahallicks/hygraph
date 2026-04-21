@@ -41,10 +41,17 @@ export const HeaderComponent: React.FC<IGlobalData> = ({
 	}, [navigation.state, isLoading]);
 
 	return (
-		<header className="sticky inset-x-0 top-0 z-40 backdrop-blur-md">
+		<header className="sticky inset-x-0 top-0 z-40">
+			<div
+				className="pointer-events-none absolute inset-0 h-[200%] backdrop-blur-sm"
+				style={{
+					maskImage:
+						'linear-gradient(to bottom, black 0% 50%, transparent 50% 100%)',
+				}}
+			/>
 			<nav
 				aria-label="Global"
-				className="flex items-center justify-between px-6 py-4 lg:px-8 lg:py-6"
+				className="relative flex items-center justify-between px-6 py-4 lg:px-8 lg:py-6"
 			>
 				<div className="flex lg:flex-1">
 					<Link to="/" rel="home" className="-m-1.5 p-1.5">

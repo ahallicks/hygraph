@@ -11,6 +11,7 @@ export const ArticleCards: React.FC<IArticleCards> = ({
 	id,
 	cardsTitle,
 	subtitle,
+	showCarousel,
 	pageReference,
 	contentId,
 }) => {
@@ -42,9 +43,25 @@ export const ArticleCards: React.FC<IArticleCards> = ({
 					</div>
 				) : null}
 				{pageReference?.childPages?.length ? (
-					<CarouselContainer steps={1}>
-						<CarouselButtons />
-						<Carousel>
+					showCarousel ? (
+						<CarouselContainer steps={1}>
+							<CarouselButtons />
+							<Carousel>
+								{pageReference.childPages.map((post) => (
+									<li
+										key={post.id}
+										className="flex snap-start"
+									>
+										<ArticleCard
+											post={post}
+											contentId={contentId}
+										/>
+									</li>
+								))}
+							</Carousel>
+						</CarouselContainer>
+					) : (
+						<ul className="mx-auto grid max-w-2xl grid-cols-1 gap-4 pt-4 pb-10 md:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-3 xl:gap-8 dark:border-gray-700">
 							{pageReference.childPages.map((post) => (
 								<li key={post.id} className="flex snap-start">
 									<ArticleCard
@@ -53,8 +70,8 @@ export const ArticleCards: React.FC<IArticleCards> = ({
 									/>
 								</li>
 							))}
-						</Carousel>
-					</CarouselContainer>
+						</ul>
+					)
 				) : null}
 			</div>
 		</section>

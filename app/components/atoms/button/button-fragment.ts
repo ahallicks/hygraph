@@ -3,6 +3,7 @@ export const ButtonLinkFragment = `
 	id
 	linkText
 	linkUrl
+	openNewWindow
 	variation
 	page {
 		... on Page {
